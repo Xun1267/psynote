@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PsyNote - 心理学学习笔记</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="glassmorphism.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    </head>
+<body>
+
+    <!-- 主要内容区域 -->
+    <main>
+        <!-- 首页 -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">欢迎加入 PsyNote</h1>
+                    <button id="announcement-btn" class="glass-button announcement-fab">公告</button>
+                    <div class="hero-cards">
+                        <div class="feature-card glass-card" onclick="openSubjectModal('notes')">
+                            <div class="card-icon">📚</div>
+                            <h3>科目笔记</h3>
+                        </div>
+                        <div class="feature-card glass-card" onclick="openSubjectModal('quizzes')">
+                            <div class="card-icon">📝</div>
+                            <h3>题库</h3>
+                        </div>
+                        <div class="feature-card glass-card" onclick="openSubjectModal('flashcards')">
+                            <div class="card-icon">🎯</div>
+                            <h3>闪卡</h3>
+                        </div>
+                        <div class="feature-card glass-card" onclick="openSubjectModal('mock')">
+                            <div class="card-icon">📖</div>
+                            <h3>模拟题</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 课程讲义 -->
+        <section id="notes" class="section">
+            <div class="container">
+                <h2 class="section-title">课程讲义</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-subject="all">全部</button>
+                    <button class="filter-tab" data-subject="general_psych">普通心理学</button>
+                    <button class="filter-tab" data-subject="developmental">发展心理学</button>
+                    <button class="filter-tab" data-subject="statistics">心理统计学</button>
+                    <button class="filter-tab" data-subject="experimental">实验心理学</button>
+                </div>
+                <div class="notes-grid" id="notes-grid">
+                    <!-- 动态加载讲义内容 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 刷题题库 -->
+        <section id="quizzes" class="section">
+            <div class="container">
+                <h2 class="section-title">刷题题库</h2>
+                <div class="quiz-container">
+                    <div class="quiz-filters">
+                        <select id="quiz-subject" class="glass-select">
+                            <option value="">选择科目</option>
+                            <option value="general_psych">普通心理学</option>
+                            <option value="developmental">发展心理学</option>
+                            <option value="statistics">心理统计学</option>
+                        </select>
+                        <select id="quiz-chapter" class="glass-select">
+                            <option value="">选择章节</option>
+                        </select>
+                    </div>
+                    <div id="quiz-content" class="quiz-content">
+                        <!-- 动态加载题目内容 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 记忆闪卡 -->
+        <section id="flashcards" class="section">
+            <div class="container">
+                <h2 class="section-title">记忆闪卡</h2>
+                <div class="flashcard-filters">
+                    <select id="flashcard-subject" class="glass-select">
+                        <option value="">选择科目</option>
+                        <option value="general_psych">普通心理学</option>
+                        <option value="developmental">发展心理学</option>
+                        <option value="statistics">心理统计学</option>
+                    </select>
+                </div>
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="card-content">
+                                    <h3 id="card-term">点击开始</h3>
+                                </div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="card-content">
+                                    <p id="card-definition">选择科目开始学习</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard-controls">
+                        <button class="control-btn" id="btn-unknown">不认识</button>
+                        <button class="control-btn" id="btn-known">认识</button>
+                        <button class="control-btn" id="btn-flip">翻转</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 扩展阅读 -->
+        <section id="articles" class="section">
+            <div class="container">
+                <h2 class="section-title">扩展阅读</h2>
+                <div class="articles-grid" id="articles-grid">
+                    <!-- 动态加载文章列表 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于 -->
+        <section id="about" class="section">
+            <div class="container">
+                <h2 class="section-title">关于 PsyNote</h2>
+                <div class="about-content">
+                    <div class="about-card">
+                        <h3>项目愿景</h3>
+                        <p>PsyNote 致力于为心理学本科生提供高质量的复习资料，帮助同学们更好地掌握心理学知识，顺利通过期末考试。</p>
+                    </div>
+                    <div class="about-card">
+                        <h3>内容特色</h3>
+                        <p>所有内容都经过精心整理和校对，涵盖普通心理学、发展心理学、心理统计学等核心课程。</p>
+                    </div>
+                    <div class="about-card">
+                        <h3>持续更新</h3>
+                        <p>我们会持续更新和完善内容，为心理学学习者提供更好的学习体验。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PDF 预览模态框 -->
+    <div id="pdf-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="pdf-viewer">
+                <iframe id="pdf-viewer" src="" frameborder="0"></iframe>
+            </div>
+            <div class="pdf-controls">
+                <a id="pdf-download" href="#" download class="download-btn">下载 PDF</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文章详情模态框 -->
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="article-content">
+                <!-- 动态加载文章内容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 科目选择模态框 -->
+    <div id="subject-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="container">
+                <h2 class="section-title">选择科目</h2>
+                <div class="subject-grid">
+                    <button class="subject-btn" data-subject="教育心理学">教育心理学</button>
+                    <button class="subject-btn" data-subject="社会心理学">社会心理学</button>
+                    <button class="subject-btn" data-subject="发展心理学">发展心理学</button>
+                    <button class="subject-btn" data-subject="普通心理学1-2">普通心理学1-2</button>
+                    <button class="subject-btn" data-subject="心理学史">心理学史</button>
+                    <button class="subject-btn" data-subject="心理统计学">心理统计学</button>
+                    <button class="subject-btn" data-subject="心理测量学">心理测量学</button>
+                    <button class="subject-btn" data-subject="实验心理学">实验心理学</button>
+                    <button class="subject-btn" data-subject="认知心理学">认知心理学</button>
+                    <button class="subject-btn" data-subject="心理学研究方法">心理学研究方法</button>
+                    <button class="subject-btn" data-subject="管理心理学">管理心理学</button>
+                    <button class="subject-btn" data-subject="生理心理学">生理心理学</button>
+                    <button class="subject-btn" data-subject="人格心理学">人格心理学</button>
+                    <button class="subject-btn" data-subject="变态心理学">变态心理学</button>
+                    <button class="subject-btn" data-subject="咨询心理学">咨询心理学</button>
+                    <button class="subject-btn" data-subject="心理健康教育概论">心理健康教育概论</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 公告模态框 -->
+    <div id="announcement-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="container">
+                <h2 class="section-title">公告栏</h2>
+                <div id="announcement-content" class="about-card" style="text-align:left;">
+                    <p>2025.12.12</p>
+                    <ul>
+                        <li>笔记：教育心理学、心理测量学、实验心理学</li>
+                        <li>笔记+题库：心理学研究方法、心理健康教育概论</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script src="notes.js"></script>
+    <script src="quizzes.js"></script>
+    <script src="flashcards.js"></script>
+    <script src="articles.js"></script>
+</body>
+</html>

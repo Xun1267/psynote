@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发展心理学 - 第二章：皮亚杰认知发展理论</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        p {
+            text-indent: 2em;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+        }
+        .key-point {
+            background-color: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stage-box {
+            background-color: #f0f8f0;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .age-range {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>第二章：皮亚杰认知发展理论</h1>
+    
+    <h2>2.1 理论概述</h2>
+    <p>
+        <span class="highlight">让·皮亚杰（Jean Piaget）</span>是瑞士著名的发展心理学家，他的认知发展理论是发展心理学中最有影响力的理论之一。皮亚杰通过对自己孩子的长期观察，提出了<span class="highlight">认知发展阶段理论</span>。
+    </p>
+    
+    <div class="key-point">
+        <strong>核心观点：</strong>儿童的认知发展是一个<span class="highlight">主动建构</span>的过程，通过与环境的相互作用，儿童的认知结构不断发展和完善。
+    </div>
+    
+    <h2>2.2 认知发展的基本机制</h2>
+    <p>
+        皮亚杰认为，认知发展主要通过两种机制实现：
+    </p>
+    
+    <h3>2.2.1 同化（Assimilation）</h3>
+    <p>
+        同化是指个体将<span class="highlight">新的信息纳入已有的认知结构</span>中。例如，儿童已经知道"狗"的概念，当他看到一只新的狗时，会将其归入"狗"的范畴。
+    </p>
+    
+    <h3>2.2.2 顺应（Accommodation）</h3>
+    <p>
+        顺应是指个体<span class="highlight">调整已有的认知结构</span>以适应新的信息。当儿童发现原有的认知结构无法解释新经验时，就会改变或创建新的认知结构。
+    </p>
+    
+    <div class="key-point">
+        <strong>同化和顺应的关系：</strong>同化是<span class="highlight">量的变化</span>，顺应是<span class="highlight">质的变化</span>。两者相互补充，共同促进认知发展。
+    </div>
+    
+    <h2>2.3 认知发展的四个阶段</h2>
+    <p>
+        皮亚杰将儿童的认知发展划分为四个阶段，每个阶段都有其特定的认知特征：
+    </p>
+    
+    <div class="stage-box">
+        <h3>阶段一：感知运动阶段 <span class="age-range">0-2岁</span></h3>
+        <p><strong>主要特征：</strong></p>
+        <ul>
+            <li>通过<span class="highlight">感觉和动作</span>探索世界</li>
+            <li>发展<span class="highlight">客体永久性</span>概念</li>
+            <li>出现<span class="highlight">目标指向行为</span></li>
+            <li>从反射行为发展到有目的的行为</li>
+        </ul>
+        
+        <p><strong>重要成就：</strong></p>
+        <div class="key-point">
+            <strong>客体永久性：</strong>理解物体即使不在视野中也仍然存在。这是感知运动阶段最重要的成就，通常在<span class="highlight">8-12个月</span>开始出现。
+        </div>
+    </div>
+    
+    <div class="stage-box">
+        <h3>阶段二：前运算阶段 <span class="age-range">2-7岁</span></h3>
+        <p><strong>主要特征：</strong></p>
+        <ul>
+            <li><span class="highlight">符号思维</span>开始发展</li>
+            <li><span class="highlight">语言</span>和想象能力出现</li>
+            <li>思维具有<span class="highlight">自我中心性</span></li>
+            <li>缺乏<span class="highlight">守恒概念</span></li>
+        </ul>
+        
+        <p><strong>局限性：</strong></p>
+        <div class="key-point">
+            <strong>自我中心性：</strong>儿童只能从自己的角度看待事物，难以理解他人的观点。
+        </div>
+        
+        <div class="key-point">
+            <strong>缺乏守恒：</strong>不能理解物体的某些属性（如数量、体积）在形状改变时保持不变。
+        </div>
+    </div>
+    
+    <div class="stage-box">
+        <h3>阶段三：具体运算阶段 <span class="age-range">7-11岁</span></h3>
+        <p><strong>主要特征：</strong></p>
+        <ul>
+            <li>获得<span class="highlight">守恒概念</span></li>
+            <li>能够进行<span class="highlight">逻辑思维</span></li>
+            <li>理解<span class="highlight">分类</span>和<span class="highlight">序列</span>关系</li>
+            <li>能够进行<span class="highlight">逆向思维</span></li>
+        </ul>
+        
+        <p><strong>重要成就：</strong></p>
+        <div class="key-point">
+            <strong>守恒概念：</strong>理解物体的某些属性在形状改变时保持不变，包括数量守恒、长度守恒、面积守恒等。
+        </div>
+    </div>
+    
+    <div class="stage-box">
+        <h3>阶段四：形式运算阶段 <span class="age-range">11岁以上</span></h3>
+        <p><strong>主要特征：</strong></p>
+        <ul>
+            <li><span class="highlight">抽象思维</span>能力发展</li>
+            <li><span class="highlight">假设演绎推理</span></li>
+            <li><span class="highlight">系统性</span>解决问题</li>
+            <li>能够思考<span class="highlight">假设</span>情境</li>
+        </ul>
+        
+        <p><strong>重要成就：</strong></p>
+        <div class="key-point">
+            <strong>抽象思维：</strong>能够处理抽象概念，进行假设推理，不再局限于具体事物。
+        </div>
+    </div>
+    
+    <h2>2.4 对皮亚杰理论的评价</h2>
+    <p>
+        皮亚杰的认知发展理论对心理学和教育学产生了深远影响，但也存在一些争议：
+    </p>
+    
+    <h3>2.4.1 贡献</h3>
+    <ul>
+        <li>揭示了儿童认知发展的<span class="highlight">阶段性特征</span></li>
+        <li>强调了认知发展的<span class="highlight">主动性</span></li>
+        <li>为教育实践提供了<span class="highlight">理论指导</span></li>
+        <li>启发了后续的大量<span class="highlight">研究</span></li>
+    </ul>
+    
+    <h3>2.4.2 局限性</h3>
+    <ul>
+        <li>低估了儿童的<span class="highlight">认知能力</span></li>
+        <li>忽视了<span class="highlight">社会文化因素</span>的影响</li>
+        <li>阶段的划分可能<span class="highlight">过于严格</span></li>
+        <li>研究方法存在<span class="highlight">局限性</span></li>
+    </ul>
+    
+    <div class="summary-box">
+        <h3>本章小结</h3>
+        <p>
+            皮亚杰的认知发展理论是发展心理学的重要理论，它揭示了儿童认知发展的阶段性特征和内在机制。通过同化、顺应等机制，儿童的认知结构不断完善，经历了感知运动、前运算、具体运算和形式运算四个阶段。虽然该理论存在一些局限性，但它对理解儿童认知发展和指导教育实践具有重要意义。
+        </p>
+        <p>
+            <strong>关键词：</strong>皮亚杰、认知发展、同化、顺应、感知运动阶段、前运算阶段、具体运算阶段、形式运算阶段、客体永久性、守恒概念、自我中心性、抽象思维
+        </p>
+    </div>
+    
+    <h2>思考题</h2>
+    <div class="key-point">
+        <ol>
+            <li>简述皮亚杰认知发展理论的基本观点。</li>
+            <li>什么是同化和顺应？它们在认知发展中起什么作用？</li>
+            <li>描述皮亚杰认知发展的四个阶段及其主要特征。</li>
+            <li>什么是客体永久性？它在哪个阶段形成？</li>
+            <li>前运算阶段的儿童思维有哪些特点？</li>
+            <li>具体运算阶段儿童获得了哪些重要概念？</li>
+            <li>形式运算阶段的思维特征是什么？</li>
+            <li>如何评价皮亚杰的认知发展理论？</li>
+        </ol>
+    </div>
+    
+    <p style="margin-top: 3rem; text-align: center; color: #7f8c8d;">
+        <em>本章内容基于皮亚杰的《儿童的认知发展》等著作整理，仅供学习参考使用。</em>
+    </p>
+</body>
+</html>

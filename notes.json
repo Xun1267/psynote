@@ -1,0 +1,50 @@
+[
+  {
+    "subject": "普通心理学",
+    "subject_key": "general_psych",
+    "title": "第一章：心理学概述",
+    "file_path": "general_psych_chap1.pdf",
+    "date": "2023-10-01",
+    "description": "介绍心理学的基本概念、研究方法和主要分支"
+  },
+  {
+    "subject": "普通心理学", 
+    "subject_key": "general_psych",
+    "title": "第二章：感觉与知觉",
+    "file_path": "assets/docs/general_psych/chap2.pdf",
+    "date": "2023-10-08",
+    "description": "探讨感觉和知觉的基本原理和机制"
+  },
+  {
+    "subject": "发展心理学",
+    "subject_key": "developmental", 
+    "title": "第一章：发展心理学导论",
+    "file_path": "assets/docs/developmental/chap1.pdf",
+    "date": "2023-10-15",
+    "description": "发展心理学的基本理论和研究方法"
+  },
+  {
+    "subject": "发展心理学",
+    "subject_key": "developmental",
+    "title": "第二章：皮亚杰认知发展理论",
+    "file_path": "developmental_chap2.pdf", 
+    "date": "2023-10-22",
+    "description": "详细解析皮亚杰的认知发展阶段理论"
+  },
+  {
+    "subject": "心理统计学",
+    "subject_key": "statistics",
+    "title": "第一章：统计学基础",
+    "file_path": "assets/docs/statistics/chap1.pdf",
+    "date": "2023-11-01",
+    "description": "统计学基本概念和描述性统计"
+  },
+  {
+    "subject": "实验心理学",
+    "subject_key": "experimental",
+    "title": "第一章：实验设计基础",
+    "file_path": "assets/docs/experimental/chap1.pdf",
+    "date": "2023-11-08",
+    "description": "实验心理学的基本原理和实验设计方法"
+  }
+]

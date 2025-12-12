@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>普通心理学 - 第一章：心理学概述</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        p {
+            text-indent: 2em;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+        }
+        .key-point {
+            background-color: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>第一章：心理学概述</h1>
+    
+    <h2>1.1 心理学的定义</h2>
+    <p>
+        <span class="highlight">心理学</span>是研究<span class="highlight">心理现象</span>的科学。它既研究人的心理，也研究动物的心理；既研究个体的心理，也研究群体的心理。心理学通过<span class="highlight">科学的方法</span>来研究心理现象，揭示心理活动的规律。
+    </p>
+    
+    <h2>1.2 心理学的研究对象</h2>
+    <p>
+        心理学的研究对象主要包括以下几个方面：
+    </p>
+    <h3>1.2.1 认知过程</h3>
+    <p>
+        认知过程包括<span class="highlight">感觉、知觉、记忆、思维、想象</span>等。这些过程构成了人类认识世界的基本方式。
+    </p>
+    
+    <h3>1.2.2 情绪过程</h3>
+    <p>
+        情绪过程包括<span class="highlight">情绪、情感、动机、意志</span>等。这些过程反映了人对客观事物的态度体验和行为倾向。
+    </p>
+    
+    <h3>1.2.3 个性心理</h3>
+    <p>
+        个性心理包括<span class="highlight">个性倾向性</span>（需要、动机、兴趣、理想、信念、世界观）和<span class="highlight">个性心理特征</span>（能力、气质、性格）。
+    </p>
+    
+    <div class="key-point">
+        <strong>重点理解：</strong>心理学的研究对象既包括外显的行为表现，也包括内隐的心理过程；既包括有意识的心理活动，也包括无意识的心理现象。
+    </div>
+    
+    <h2>1.3 心理学的任务</h2>
+    <p>
+        心理学的基本任务包括：<span class="highlight">描述、解释、预测、控制</span>心理和行为。
+    </p>
+    
+    <h3>1.3.1 描述</h3>
+    <p>
+        对心理现象进行<span class="highlight">客观、准确</span>的描述，是心理学研究的第一步。
+    </p>
+    
+    <h3>1.3.2 解释</h3>
+    <p>
+        揭示心理现象的<span class="highlight">原因和机制</span>，说明心理现象是如何产生的。
+    </p>
+    
+    <h3>1.3.3 预测</h3>
+    <p>
+        根据已有的知识，对心理现象的<span class="highlight">发展趋势和结果</span>进行预测。
+    </p>
+    
+    <h3>1.3.4 控制</h3>
+    <p>
+        通过一定的手段，对心理和行为进行<span class="highlight">调节和控制</span>，使其朝着有利的方向发展。
+    </p>
+    
+    <h2>1.4 心理学的研究方法</h2>
+    <p>
+        心理学研究主要采用以下几种方法：
+    </p>
+    
+    <h3>1.4.1 观察法</h3>
+    <p>
+        在自然条件下，对心理现象进行<span class="highlight">系统、有目的</span>的观察。观察法的优点是<span class="highlight">自然、真实</span>，缺点是<span class="highlight">难以控制变量</span>。
+    </p>
+    
+    <h3>1.4.2 实验法</h3>
+    <p>
+        在<span class="highlight">控制条件</span>下，研究心理现象的方法。实验法的优点是<span class="highlight">可重复、可控制</span>，缺点是<span class="highlight">人工化</span>。
+    </p>
+    
+    <h3>1.4.3 调查法</h3>
+    <p>
+        通过<span class="highlight">问卷、访谈</span>等方式收集资料的方法。调查法的优点是<span class="highlight">高效、经济</span>，缺点是<span class="highlight">受主观因素影响</span>。
+    </p>
+    
+    <h3>1.4.4 测验法</h3>
+    <p>
+        使用<span class="highlight">标准化</span>的量表对心理特征进行测量。测验法的优点是<span class="highlight">客观、标准化</span>，缺点是<span class="highlight">受文化背景影响</span>。
+    </p>
+    
+    <div class="summary-box">
+        <h3>本章小结</h3>
+        <p>
+            本章介绍了心理学的基本概念，包括心理学的定义、研究对象、基本任务和研究方法。心理学作为一门科学，通过科学的方法研究心理现象，旨在描述、解释、预测和控制心理与行为。理解这些基本概念是学习心理学的基础。
+        </p>
+        <p>
+            <strong>关键词：</strong>心理学、心理现象、认知过程、情绪过程、个性心理、描述、解释、预测、控制、观察法、实验法、调查法、测验法
+        </p>
+    </div>
+    
+    <h2>思考题</h2>
+    <div class="key-point">
+        <ol>
+            <li>什么是心理学？它的研究对象包括哪些方面？</li>
+            <li>心理学的基本任务是什么？</li>
+            <li>心理学有哪些主要的研究方法？各有什么优缺点？</li>
+            <li>为什么说心理学是一门科学？</li>
+            <li>心理学研究中的伦理问题有哪些？</li>
+        </ol>
+    </div>
+    
+    <p style="margin-top: 3rem; text-align: center; color: #7f8c8d;">
+        <em>本章内容基于《普通心理学》教材整理，仅供学习参考使用。</em>
+    </p>
+</body>
+</html>

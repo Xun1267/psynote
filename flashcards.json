@@ -1,0 +1,38 @@
+[
+  {
+    "term": "客体永久性",
+    "definition": "儿童理解即使物体从视野中消失，它依然存在的认知能力。这是感知运动阶段的重要成就。",
+    "subject": "发展心理学",
+    "subject_key": "developmental"
+  },
+  {
+    "term": "感觉阈限",
+    "definition": "能够引起感觉的最小刺激量。分为绝对阈限和差别阈限两种。",
+    "subject": "普通心理学",
+    "subject_key": "general_psych"
+  },
+  {
+    "term": "认知失调",
+    "definition": "个体同时持有两个或多个相互矛盾的认知、态度或信念时所产生的不舒适心理状态。",
+    "subject": "普通心理学",
+    "subject_key": "general_psych"
+  },
+  {
+    "term": "形式运算阶段",
+    "definition": "皮亚杰认知发展理论的第四阶段（11岁以上），儿童开始能够进行抽象思维和假设推理。",
+    "subject": "发展心理学",
+    "subject_key": "developmental"
+  },
+  {
+    "term": "标准差",
+    "definition": "衡量数据离散程度的统计量，表示数据点与平均数的平均距离。",
+    "subject": "心理统计学",
+    "subject_key": "statistics"
+  },
+  {
+    "term": "实验组",
+    "definition": "在实验研究中接受实验处理的被试组，用于观察实验处理的效果。",
+    "subject": "实验心理学",
+    "subject_key": "experimental"
+  }
+]

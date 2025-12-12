@@ -1,0 +1,28 @@
+{
+  "name": "psy-note",
+  "version": "1.0.0",
+  "description": "心理学学习笔记 - 为心理学本科生提供期末复习资料",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/psy-note.git"
+  },
+  "keywords": [
+    "psychology",
+    "education",
+    "study-notes",
+    "flashcards",
+    "quiz",
+    "glassmorphism",
+    "static-website"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/psy-note/issues"
+  },
+  "homepage": "https://your-username.github.io/psy-note"
+}
