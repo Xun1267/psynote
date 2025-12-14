@@ -487,6 +487,21 @@ main {
         grid-template-columns: 1fr 1fr;
     }
 }
+.site-watermark {
+    position: fixed;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    user-select: none;
+    z-index: 500;
+}
 .feature-card.glass-card::before {
     content: '';
     position: absolute;
