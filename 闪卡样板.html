@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理测量学闪卡记忆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .progress {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            height: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4CAF50, #81C784);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+
+        .flashcard {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease, opacity 0.5s ease, scale 0.5s ease;
+            cursor: pointer;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard.slide-out {
+            transform: translateX(100%) rotateZ(15deg);
+            opacity: 0;
+        }
+
+        .flashcard.delete-out {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            transform: rotateY(180deg);
+            border: 2px solid #90caf9;
+        }
+
+        .card-content {
+            font-size: 18px;
+            line-height: 1.6;
+            max-height: 100%;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .card-front .card-content {
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-skip {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .btn-skip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        .btn-shuffle {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+        }
+
+        .btn-shuffle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.4);
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        .completion-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .completion-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .completion-modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .modal-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .card-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 600px) {
+            .card-container {
+                height: 350px;
+            }
+            
+            .card-content {
+                font-size: 16px;
+            }
+            
+            .card-front .card-content {
+                font-size: 18px;
+            }
+            
+            .controls {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>心理测量学闪卡记忆</h1>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p id="cardCounter">卡片 1 / 25</p>
+        </div>
+
+        <div class="card-container">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="card-content" id="questionContent">载入中...</div>
+                    <div class="card-hint">点击卡片查看答案</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-content" id="answerContent">载入中...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-skip" id="skipBtn">跳过</button>
+            <button class="btn btn-delete" id="deleteBtn">删除</button>
+            <button class="btn btn-shuffle" id="shuffleBtn">重新洗牌</button>
+        </div>
+
+        <div class="stats">
+            <div class="stats-item">
+                <strong>已复习:</strong> <span id="reviewedCount">0</span>
+            </div>
+            <div class="stats-item">
+                <strong>剩余:</strong> <span id="remainingCount">25</span>
+            </div>
+            <div class="stats-item">
+                <strong>总次数:</strong> <span id="totalReviews">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="completion-modal" id="completionModal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 学习完成！</h2>
+            <p class="modal-text">恭喜你完成了所有闪卡的学习！</p>
+            <p class="modal-text">总复习次数: <span id="finalReviewCount">0</span></p>
+            <button class="btn btn-restart" id="restartBtn">重新开始</button>
+        </div>
+    </div>
+
+    <script>
+        // 闪卡数据
+        const flashcardData = [
+            {
+                question: "良好单位的条件是什么？",
+                answer: "（1）确定的意义\n（2）相等的价值"
+            },
+            {
+                question: "心理测量的特点有哪些？",
+                answer: "（1）间接性\n①抽象的精神对象\n②测量受多种因素影响\n③测量工具不唯一\n④人有主观能动性\n⑤反应量化过程复杂\n（2）相对性\n①没有确定的函数关系\n②没有绝对的标准\n（3）客观性"
+            },
+            {
+                question: "信度的作用是什么？",
+                answer: "反映随机误差大小\n解释个人分数的意义\n比较不同测验分数之间的差异"
+            },
+            {
+                question: "影响信度的因素有哪些？",
+                answer: "（1）被试因素\n①被试自身引起的误差\n②被试团体的异质性\n③被试团体的平均水平\n（2）测量工具因素\n①测验的长度\n②题目间的同质性程度\n（3）施测过程因素"
+            },
+            {
+                question: "提高信度的方法有哪些？",
+                answer: "（1）适当增加测验的长度\n（2）因素分析和鉴别力分析\n（3）控制测验题目的难度\n（4）选取恰当的被试团体\n（5）施测过程的标准化"
+            },
+            {
+                question: "信度和效度的关系是什么？",
+                answer: "（1）信度高是效度高的必要不充分条件\n（2）效度受信度的制约"
+            },
+            {
+                question: "高内容效度的条件是什么？",
+                answer: "（1）要有定义完好的内容范围\n（2）测验题目应是所界定的内容范围的代表性取样"
+            },
+            {
+                question: "内容效度的估计方法有哪些？",
+                answer: "（1）逻辑分析法\n（2）统计法：复本法和再测法\n（3）经验法"
+            },
+            {
+                question: "构想效度的估计方法有哪些？",
+                answer: "（1）测验内方法\n①考察内容效度\n②分析被试作答反应过程\n③考察测验的同质性信度\n（2）测验间方法\n①相容效度法\n②区分效度法\n③因素分析法\n（3）考察测验的实证效度\n（4）实验控制法\n（5）多种特质多种方法矩阵\n①主对角线：信度\n②下划线：相容效度\n③实线三角形：区分效度\n④虚线三角形：特质与方法的交互作用\n（6）因素分析法\n①探索性因素分析\n②验证性因素分析"
+            },
+            {
+                question: "良好的效标测量的条件有哪些？",
+                answer: "（1）可靠性：效标测量不会因时间情境发生改变\n（2）有效性：效标测量必须能反映观念效标\n（3）客观性：避免主观偏见、减少效标污染\n（4）实用性：效标测量简单、省时、省钱、可操作\n（5）相关性：效标与预测源所测特质有关"
+            },
+            {
+                question: "效度的影响因素有哪些？",
+                answer: "（1）测验的因素\n①测验的内容\n②测验的难度\n③测验的长度\n④测验的信度\n（2）被试的因素\n①被试自身引起的误差\n②被试样本的代表性\n③干涉变量\n（3）施测过程\n（4）所选效标的性质\n①效标的选择\n②预测源分数与效标测量分数的关系类型\n③效标测量的信度"
+            },
+            {
+                question: "难度对测验的影响有哪些？",
+                answer: "（1）难度影响测验分数的分布形态\n①极端难度时：分数分布集中在一个分数点上\n②难度偏高或偏低时：分数分布呈偏态分布\n③难度中等时：分数呈正态分布\n（2）难度影响离散程度和信度\n①极端难度时：离散程度为0，信度为0\n②难度偏高或偏低时：离散程度低，信度低\n③难度中等时：信度高\n（3）难度影响测验的鉴别力\n①极端难度时，分数分布集中在一个点上，没有鉴别力\n②难度偏高或偏低时：难度偏高时对高水平被试鉴别力高；难度偏低时对低水平被试鉴别力高\n③难度中等时：鉴别力最高"
+            },
+            {
+                question: "如何理解区分度的相对性？",
+                answer: "①用不同的计算方法，所得区分度值不同\n②样本容量大小影响相关法区分度值的大小\n③分组标准影响鉴别指数\n④被试样本的同质性程度影响区分度值得大小"
+            },
+            {
+                question: "建立常模的一般步骤是什么？",
+                answer: "（1）确定常模团体\n（2）对常模团体进行施测，并获得团体成员的测验分数及分数分布\n（3）确定常模分数类型，制作常模分数转换表，同时给出抽取常模团体的书面说明以及常模分数的解释指南等"
+            },
+            {
+                question: "确立常模团体的注意事项有哪些？",
+                answer: "（1）群体的构成必须明确界定，说明群体的性质与特征\n（2）常模团体必须时所要测量的群体的代表性取样\n（3）取样过程必须明确且详尽地描述：常模团体大小，取样策略，取样时间\n（4）样本大小要适当：①总体数目：小，全部入选或样本不能太小；大，样本大②群体性质：若单一，样本不必太大；若复杂，样本大③测验结果的精确度：若提高精确度，加大样本容量\n（5）要注意常模的时间性：应采用近时的常模\n（6）注意将一般常模与特殊常模结合使用"
+            },
+            {
+                question: "原始分数的特点是什么？",
+                answer: "①没有绝对零点\n②具有不等距性\n③具有不确定性\n④具有孤立性"
+            },
+            {
+                question: "常模表（分数转换表）的基本要素有哪些？",
+                answer: "（1）原始分数\n（2）与每个原始分数对应的导出分数\n（3）常模团体构成的描述"
+            },
+            {
+                question: "标准参照测验的信度估计方法有哪些？",
+                answer: "（1）分类一致性信度\n（2）荷伊特信度"
+            },
+            {
+                question: "测验等值的条件有哪些？",
+                answer: "（1）同质性：测量同一只心理特质，测验的内容与范围基本相同\n（2）等信度：不同测验形式必须有相等的测验信度\n（3）公平性：不同测验形式等之后的结果一样\n（4）可传递性：已等值的测验形式存在递推关系\n（5）对称性：已等值的测量形式存在互逆的关系\n（6）样本不变性：等值关系与样本无关"
+            },
+            {
+                question: "常用测验等值的方法有哪些？",
+                answer: "（1）等百分位等值法\n（2）线性等值法"
+            },
+            {
+                question: "编制测验的一般程序和步骤是什么？",
+                answer: "（1）确定测验目的\n（2）拟定编题计划\n（3）开发测验项目\n（4）预测与合成测验\n（5）测验的标准化\n（6）测验的鉴定及使用说明"
+            },
+            {
+                question: "项目编排的形式有哪些？",
+                answer: "（1）按项目类型组合测验\n（2）按项目所测量的内容排列\n（3）按项目难度排列：①并列直进式②混合螺旋式"
+            },
+            {
+                question: "韦式智力量表四指数是什么？",
+                answer: "①言语理解\n②知觉推理\n③工作记忆\n④加工速度"
+            },
+            {
+                question: "投射测验的类型有哪些？",
+                answer: "（1）联想型\n（2）构造型\n（3）完成型\n（4）选排型\n（5）表露型"
+            },
+            {
+                question: "人格测验的编制方法有哪些？",
+                answer: "（1）合理建构法\n（2）经验标准法\n（3）因素分析法\n（4）综合技术"
+            }
+        ];
+
+        // Fisher-Yates 随机洗牌算法
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 应用状态
+        let currentCardIndex = 0;
+        let remainingCards = [];
+        let reviewedCount = 0;
+        let totalReviews = 0;
+        let isFlipped = false;
+
+        // DOM元素
+        const flashcard = document.getElementById('flashcard');
+        const questionContent = document.getElementById('questionContent');
+        const answerContent = document.getElementById('answerContent');
+        const skipBtn = document.getElementById('skipBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const progressBar = document.getElementById('progressBar');
+        const cardCounter = document.getElementById('cardCounter');
+        const reviewedCountEl = document.getElementById('reviewedCount');
+        const remainingCountEl = document.getElementById('remainingCount');
+        const totalReviewsEl = document.getElementById('totalReviews');
+        const completionModal = document.getElementById('completionModal');
+        const finalReviewCount = document.getElementById('finalReviewCount');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // 初始化
+        function init() {
+            // 随机洗牌初始化卡片顺序
+            remainingCards = shuffleArray(flashcardData);
+            loadCard();
+            updateStats();
+            
+            // 绑定事件
+            flashcard.addEventListener('click', flipCard);
+            skipBtn.addEventListener('click', skipCard);
+            deleteBtn.addEventListener('click', deleteCard);
+            shuffleBtn.addEventListener('click', shuffleCards);
+            restartBtn.addEventListener('click', restart);
+        }
+
+        // 加载卡片
+        function loadCard() {
+            if (remainingCards.length === 0) {
+                showCompletionModal();
+                return;
+            }
+            
+            currentCardIndex = 0;
+            const currentCard = remainingCards[currentCardIndex];
+            questionContent.textContent = currentCard.question;
+            answerContent.textContent = currentCard.answer;
+            
+            // 重置卡片状态
+            flashcard.classList.remove('flipped', 'slide-out', 'delete-out');
+            isFlipped = false;
+            
+            updateProgress();
+        }
+
+        // 翻转卡片
+        function flipCard() {
+            if (!isFlipped) {
+                flashcard.classList.add('flipped');
+                isFlipped = true;
+                totalReviews++;
+                updateStats();
+            }
+        }
+
+        // 跳过卡片
+        function skipCard() {
+            if (remainingCards.length <= 1) {
+                showCompletionModal();
+                return;
+            }
+            
+            flashcard.classList.add('slide-out');
+            
+            setTimeout(() => {
+                // 将当前卡片移到数组末尾
+                const skippedCard = remainingCards.shift();
+                remainingCards.push(skippedCard);
+                
+                loadCard();
+            }, 500);
+        }
+
+        // 删除卡片
+        function deleteCard() {
+            flashcard.classList.add('delete-out');
+            
+            setTimeout(() => {
+                // 从数组中删除当前卡片
+                remainingCards.splice(currentCardIndex, 1);
+                reviewedCount++;
+                
+                loadCard();
+                updateStats();
+            }, 500);
+        }
+
+        // 重新洗牌
+        function shuffleCards() {
+            if (remainingCards.length <= 1) return;
+            
+            flashcard.classList.add('slide-out');
+            
+            setTimeout(() => {
+                // 重新洗牌剩余卡片
+                remainingCards = shuffleArray(remainingCards);
+                loadCard();
+            }, 500);
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const progress = (reviewedCount / flashcardData.length) * 100;
+            progressBar.style.width = progress + '%';
+            cardCounter.textContent = `卡片 ${reviewedCount + 1} / ${flashcardData.length}`;
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            reviewedCountEl.textContent = reviewedCount;
+            remainingCountEl.textContent = remainingCards.length;
+            totalReviewsEl.textContent = totalReviews;
+        }
+
+        // 显示完成模态框
+        function showCompletionModal() {
+            finalReviewCount.textContent = totalReviews;
+            completionModal.classList.add('show');
+        }
+
+        // 重新开始
+        function restart() {
+            // 重新洗牌所有卡片
+            remainingCards = shuffleArray(flashcardData);
+            reviewedCount = 0;
+            totalReviews = 0;
+            isFlipped = false;
+            
+            completionModal.classList.remove('show');
+            
+            loadCard();
+            updateStats();
+        }
+
+        // 启动应用
+        init();
+    </script>
+</body>
+</html>

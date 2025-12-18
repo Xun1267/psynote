@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理健康教育概论闪卡记忆</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container { max-width: 600px; width: 100%; position: relative; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .progress { background: rgba(255,255,255,0.2); border-radius: 20px; height: 8px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #4CAF50, #81C784); height: 100%; border-radius: 20px; transition: width 0.3s ease; width: 0%; }
+        .card-container { perspective: 1000px; position: relative; height: 400px; margin-bottom: 30px; }
+        .flashcard {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d; transition: transform 0.6s ease, opacity 0.5s ease, scale 0.5s ease;
+            cursor: pointer; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .flashcard.slide-out { transform: translateX(100%) rotateZ(15deg); opacity: 0; }
+        .flashcard.delete-out { transform: scale(0); opacity: 0; }
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 30px; text-align: center;
+        }
+        .card-front { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); color: #333; border: 2px solid #e9ecef; }
+        .card-back { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1565c0; transform: rotateY(180deg); border: 2px solid #90caf9; }
+        .card-content { font-size: 18px; line-height: 1.6; max-height: 100%; overflow-y: auto; width: 100%; }
+        .card-front .card-content { font-weight: 600; font-size: 20px; }
+        .controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 25px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .btn-skip { background: linear-gradient(135deg, #ff9800, #f57c00); color: white; }
+        .btn-skip:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,152,0,0.4); }
+        .btn-delete { background: linear-gradient(135deg, #f44336, #d32f2f); color: white; }
+        .btn-delete:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(244,67,54,0.4); }
+        .btn-shuffle { background: linear-gradient(135deg, #9c27b0, #7b1fa2); color: white; }
+        .btn-shuffle:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(156,39,176,0.4); }
+        .stats { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; color: white; text-align: center; backdrop-filter: blur(10px); }
+        .stats-item { display: inline-block; margin: 0 15px; }
+        .completion-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 1000;
+        }
+        .completion-modal.show { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: white; padding: 40px; border-radius: 20px; text-align: center;
+            max-width: 400px; width: 90%; transform: scale(0.7); transition: transform 0.3s ease;
+        }
+        .completion-modal.show .modal-content { transform: scale(1); }
+        .modal-title { font-size: 24px; color: #4CAF50; margin-bottom: 15px; }
+        .modal-text { font-size: 16px; color: #666; margin-bottom: 25px; }
+        .btn-restart { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
+        .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76,175,80,0.4); }
+        .card-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #666; font-size: 14px; opacity: 0.7; }
+        @media (max-width: 600px) {
+            .card-container { height: 350px; }
+            .card-content { font-size: 16px; }
+            .card-front .card-content { font-size: 18px; }
+            .controls { gap: 15px; flex-wrap: wrap; }
+            .btn { padding: 10px 20px; font-size: 14px; min-width: 80px; }
+        }
+        .home-fab {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            z-index: 1200;
+            font-size: 22px;
+        }
+        .home-fab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.22);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-fab" aria-label="返回首页" title="返回首页">🏠</a>
+    <div class="container">
+        <div class="header">
+            <h1>心理健康教育概论闪卡记忆</h1>
+            <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+            <p id="cardCounter">载入中...</p>
+        </div>
+        <div class="card-container">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="card-content" id="questionContent">载入中...</div>
+                    <div class="card-hint">点击卡片查看答案</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-content" id="answerContent">载入中...</div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn btn-skip" id="skipBtn">跳过</button>
+            <button class="btn btn-delete" id="deleteBtn">删除</button>
+            <button class="btn btn-shuffle" id="shuffleBtn">重新洗牌</button>
+        </div>
+        <div class="stats">
+            <div class="stats-item"><strong>已复习:</strong> <span id="reviewedCount">0</span></div>
+            <div class="stats-item"><strong>剩余:</strong> <span id="remainingCount">0</span></div>
+            <div class="stats-item"><strong>总次数:</strong> <span id="totalReviews">0</span></div>
+        </div>
+    </div>
+    <div class="completion-modal" id="completionModal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 学习完成！</h2>
+            <p class="modal-text">恭喜你完成了所有闪卡的学习！</p>
+            <p class="modal-text">总复习次数: <span id="finalReviewCount">0</span></p>
+            <button class="btn btn-restart" id="restartBtn">重新开始</button>
+        </div>
+    </div>
+    <script>
+        const flashcardData = [
+            { question: "健康的定义", answer: "一个人只有在躯体、心理、社会适应和道德四个方面都健康，才算是完全健康。在生理健康和心理健康两部分中，心理、社会适应和道德都可以纳入心理健康之中。" },
+            { question: "五“快”与三“良好”", answer: "五“快”\n①吃得快：食欲良好，快速吃完\n②便得快：排泄迅速且感觉良好\n③睡得快：快速入睡，睡得好，醒后精神饱满\n④走得快：步履轻盈\n⑤说得快：思维敏捷，口齿伶俐\n三“良好”\n①良好的个性人格：情绪稳定，性格温和，意志坚强等\n②良好的处事能力：客观现实，自控良好，适应复杂环境\n③良好的人际关系：助人为乐，与人为善，尊重他人" },
+            { question: "心理健康的含义", answer: "广义心理健康：高效而满意的持续心理状态\n狭义心理健康：基本心理活动的过程与内容完整协调一致\n总述：个体在适应环境中，生理、心理与社会性方面协调一致，保持良好心理功能状态。" },
+            { question: "学校心理健康教育的定义", answer: "根据中小学生生理、心理发展特点，运用心理教育方法和手段，培养良好心理素质，促进身心全面和谐发展与素质提高的教育活动。" },
+            { question: "心理辅导/心理咨询/心理治疗的概念辨析", answer: "心理辅导：在建设性人际关系中运用专业知识与技能，开展教育性活动，促进适应与潜能发展\n心理咨询：建立咨询关系，信息交流，消除心理问题与障碍，增进心理健康\n心理治疗：在良好治疗关系与专业训练基础上，针对较严重心理问题与障碍进行帮助，促成人格健康协调发展" },
+            { question: "心理辅导/心理咨询/心理治疗的关系", answer: "对象：\n心理辅导面向普通学生，重在预防与未来\n心理咨询面向正常学生中的心理困惑与轻中度冲突，重在发展与现在\n心理治疗面向心理健康水平较低或严重障碍者，重在矫治与过去\n方式：辅导多团体或团体+个别；咨询与治疗多个别\n时间：辅导可终生；咨询与治疗可长可短" },
+            { question: "国外学校心理健康教育的趋势", answer: "职业化、专业化、综合化、多样化、整合化、全球化" },
+            { question: "学校心理健康教育的目标", answer: "基础目标：防治疾病，增进心理健康\n中间目标：优化心理素质，促进全面发展\n终极目标：开发心理潜能，实现自我价值" },
+            { question: "学校心理健康教育的任务", answer: "面向全体学生开展预防性与发展性教育\n面向有困扰或障碍学生开展补救性与矫正性咨询辅导\n面向教师与家长开展教育以间接促进学生心理健康" },
+            { question: "学校心理健康教育的原则", answer: "全体性原则：面向全体，设施与活动聚焦共同需要与普遍问题\n差异性/针对性原则：关注个别差异，开展多样且针对性强的活动\n活动性原则：以学生为主体，通过活动促进发展" },
+            { question: "学校心理健康教育的途径", answer: "专门途径：课程与咨询\n渗透途径：学科教学、学生管理、课外活动、环境优化渗透\n支持途径：家庭与社区心理健康教育" },
+            { question: "自我意识辅导", answer: "帮助学生认识自我、悦纳自我、激励自我、调试自我、管理自我，形成健康人格。内容包括自我认识、自我接纳、自我完善三方面。" },
+            { question: "自我认识的含义", answer: "主体我对客体我的认识与评价：自我认知与自我评价。" },
+            { question: "自我认识辅导的实施", answer: "通过认识他人、分析他人对自己的评价、他人比较、自我比较、活动表现与成果、自我反思与自我批评来认识自我。" },
+            { question: "自我接纳的含义", answer: "对自己的本来面目抱认可、肯定的态度，相信自我价值，认同优点与缺点。" },
+            { question: "人际关系的教育与辅导", answer: "指导人际交往过程与活动，增进人际互动与社会适应，克服交往障碍，提高交往质量，促进人格成长。内容含师生、同伴、亲子、异性关系辅导。" },
+            { question: "异性关系辅导的实施", answer: "正确认识青少年异性交往；把握异性交往原则；了解异性交往方法；引导区分友谊与爱情。" },
+            { question: "性心理辅导", answer: "性生理教育、性心理教育、性道德教育、性法治教育。" },
+            { question: "学习动机的内容", answer: "知识价值观；学习兴趣；学习能力感/自我效能感；成就归因。" },
+            { question: "学习策略", answer: "复述策略：保持信息的反复过程\n组织策略：按特征或类别整理归类\n精细加工策略：将新信息与已有知识联系，增加意义" },
+            { question: "考试焦虑", answer: "考试期间紧张、不安、担心、焦虑、恐惧等情绪反应。分为考前持续焦虑与考试过程焦虑（怯场、晕场）。" },
+            { question: "考试焦虑的调节方法", answer: "端正应试动机、减轻负担\n做好准备，形成良好状态\n冷静处理怯场\n系统脱敏法" },
+            { question: "休闲辅导", answer: "帮助学生建立正确休闲观念与态度，获得休闲知识与技能，学会选择安排休闲活动，发展才能与个性。" },
+            { question: "正确的休闲观念与态度", answer: "意识到休闲的重要性与意义、权利与责任\n理解休闲与学习的辩证关系\n了解自身休闲爱好、志趣或偏向" },
+            { question: "职业辅导", answer: "以职业生涯发展为着眼点，树立正确职业观，认识、探索、选择、准备、安置职业并取得成功的教育活动。" },
+            { question: "职业辅导的实施", answer: "了解职业与专业\n了解自身职业心理\n掌握选择职业的技巧" },
+            { question: "学校心理健康教育课程的含义", answer: "学生在学校中获得的关于心理健康发展、心理素质提高的全部教育性经验。" },
+            { question: "学校心理健康教育课程的类型", answer: "独立型：学科课程（基础）、活动课程（核心）、环境课程（必要）\n融合型：学科课程中的融合、活动课程中的融合、环境课程中的融合" },
+            { question: "学校心理健康教育课程的目标", answer: "学科课程：实现对自身心理的认知\n活动课程：着眼心理品质的训练\n环境课程：着眼心理品质的陶冶\n融合型课程：相关心理品质的认识与训练" },
+            { question: "学校心理健康教育课程的性质", answer: "体验性、生成性、本位性、生活性。" },
+            { question: "课程内容的结构", answer: "认知经验、意志品质、情感经验、社会经验、生活实践要素。" },
+            { question: "课程主题设计", answer: "确立主题名称；设定目标；选择课时与场地；采用活动方式；课前准备；拟定活动程序。" },
+            { question: "课程教学模式", answer: "问题-情境-探究\n活动-情境-体验\n示范-体验-模仿" },
+            { question: "集体讨论法", answer: "在老师引导下围绕专题发表看法与研讨，沟通意见、集思广益、解决问题。常用方法：小组讨论、辩论式讨论、配对讨论、脑力激荡。" },
+            { question: "角色扮演法", answer: "通过扮演或模仿角色，重演场景，表露人格、情感、人际关系与内心冲突，增进自我认识，减轻或消除心理问题，发展心理素质。" },
+            { question: "心理防御机制理论", answer: "自我在不知不觉中调整冲突双方关系，缓和焦虑、消除痛苦。形式包括：压抑、否认、投射、退化、隔离、抵消转化、合理化、补偿、升华、幽默、反向形成。" },
+            { question: "系统脱敏法", answer: "当个体对事物、人或环境过度敏感时，发起不相容反应，使其不再产生敏感反应。" },
+            { question: "需要层次理论", answer: "五层次：生理、安全、社交、尊重、自我实现；后增认识需要与审美需要。" },
+            { question: "真诚", answer: "咨询员表现“真我”，不虚伪不防御，心口一致、言行一致。" },
+            { question: "共情", answer: "深入了解来访者情感与想法，设身处地体会其感受与思想，理解其看自己与看世界的方式。" },
+            { question: "尊重（无条件积极关注）", answer: "对来访者表现真诚热情、关心、喜欢与接纳，即使其表现很差也不鄙视或冷漠。" },
+            { question: "ABC理论", answer: "A：诱发事件\nB：个体的看法、解释与评价（信念）\nC：情绪与行为反应结果\n不合理信念是情绪障碍与神经症的根源。" },
+            { question: "学生心理健康问题的因素", answer: "本位因素：生物遗传与心理活动\n诱发因素：家庭、学校、社会因素" },
+            { question: "学校心理健康教育档案的内容", answer: "揭示学生心理状况、心理特点与教育活动过程与效果的材料。包括学生综合资料、心理测评资料、心理咨询与辅导活动资料等。" },
+            { question: "学校心理健康教育档案的类型", answer: "个人资料与团体资料\n专项资料与综合资料\n量化资料与非量化资料" },
+            { question: "心理测评资料", answer: "记录类型、日期、时间、场所、施策者与报告者、结果、分析及教育建议。\n包括：能力状况与教育建议；人格特征与培养建议；心理健康状况与辅导策略；学习心理与教育对策；职业能力倾向类型与指导。" },
+            { question: "学校心理健康教育工作者的涵义", answer: "广义：全体教师皆为心理健康教育工作者\n狭义：专职从事心理健康教育的人员，如心理健康教育教学教师、心理咨询工作教师、生涯辅导与规划教师等受过专门训练的专兼职人员。" },
+            { question: "学校心理健康教育工作者的角色", answer: "组织者与实施者；承担者；研究者；学生的心理咨询员；师生心理健康的示范者。" },
+            { question: "学校心理健康教育工作者的职业道德内容", answer: "热爱心理健康教育工作；热爱学生；自觉遵守心理健康教育的道德规范要求。" },
+            { question: "学校心理健康教育工作者的职业道德作用", answer: "保护行业工作；调控内部意见；提供必要保护；为来访者提供保护的法律依据。" }
+        ];
+        function shuffleArray(array) {
+            const a = [...array];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+        let currentCardIndex = 0;
+        let remainingCards = [];
+        let reviewedCount = 0;
+        let totalReviews = 0;
+        let isFlipped = false;
+        const flashcard = document.getElementById('flashcard');
+        const questionContent = document.getElementById('questionContent');
+        const answerContent = document.getElementById('answerContent');
+        const skipBtn = document.getElementById('skipBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const progressBar = document.getElementById('progressBar');
+        const cardCounter = document.getElementById('cardCounter');
+        const reviewedCountEl = document.getElementById('reviewedCount');
+        const remainingCountEl = document.getElementById('remainingCount');
+        const totalReviewsEl = document.getElementById('totalReviews');
+        const completionModal = document.getElementById('completionModal');
+        const finalReviewCount = document.getElementById('finalReviewCount');
+        const restartBtn = document.getElementById('restartBtn');
+        function init() {
+            remainingCards = shuffleArray(flashcardData);
+            loadCard();
+            updateStats();
+            flashcard.addEventListener('click', flipCard);
+            skipBtn.addEventListener('click', skipCard);
+            deleteBtn.addEventListener('click', deleteCard);
+            shuffleBtn.addEventListener('click', shuffleCards);
+            restartBtn.addEventListener('click', restart);
+        }
+        function loadCard() {
+            if (remainingCards.length === 0) { showCompletionModal(); return; }
+            currentCardIndex = 0;
+            const currentCard = remainingCards[currentCardIndex];
+            questionContent.textContent = currentCard.question;
+            answerContent.textContent = currentCard.answer;
+            flashcard.classList.remove('flipped','slide-out','delete-out');
+            isFlipped = false;
+            updateProgress();
+            updateCounter();
+        }
+        function flipCard() {
+            if (!isFlipped) {
+                flashcard.classList.add('flipped');
+                isFlipped = true;
+                totalReviews++;
+                updateStats();
+            }
+        }
+        function skipCard() {
+            if (remainingCards.length <= 1) { showCompletionModal(); return; }
+            flashcard.classList.add('slide-out');
+            setTimeout(() => {
+                const first = remainingCards.shift();
+                remainingCards.push(first);
+                reviewedCount++;
+                totalReviews++;
+                flashcard.classList.remove('slide-out');
+                loadCard();
+                updateStats();
+            }, 300);
+        }
+        function deleteCard() {
+            flashcard.classList.add('delete-out');
+            setTimeout(() => {
+                remainingCards.shift();
+                reviewedCount++;
+                totalReviews++;
+                flashcard.classList.remove('delete-out');
+                loadCard();
+                updateStats();
+            }, 250);
+        }
+        function shuffleCards() {
+            remainingCards = shuffleArray(remainingCards);
+            loadCard();
+        }
+        function updateProgress() {
+            const total = flashcardData.length;
+            const completed = total - remainingCards.length;
+            const pct = Math.round((completed / total) * 100);
+            progressBar.style.width = pct + '%';
+        }
+        function updateCounter() {
+            const total = flashcardData.length;
+            const current = total - remainingCards.length + 1;
+            const showCurrent = remainingCards.length === 0 ? total : Math.max(1, current);
+            cardCounter.textContent = `卡片 ${showCurrent} / ${total}`;
+        }
+        function updateStats() {
+            reviewedCountEl.textContent = reviewedCount;
+            remainingCountEl.textContent = remainingCards.length;
+            totalReviewsEl.textContent = totalReviews;
+        }
+        function showCompletionModal() {
+            finalReviewCount.textContent = totalReviews;
+            completionModal.classList.add('show');
+        }
+        function restart() {
+            completionModal.classList.remove('show');
+            currentCardIndex = 0;
+            remainingCards = shuffleArray(flashcardData);
+            reviewedCount = 0;
+            totalReviews = 0;
+            isFlipped = false;
+            loadCard();
+            updateStats();
+        }
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理学研究方法闪卡记忆</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container { max-width: 600px; width: 100%; position: relative; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .progress { background: rgba(255,255,255,0.2); border-radius: 20px; height: 8px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #4CAF50, #81C784); height: 100%; border-radius: 20px; transition: width 0.3s ease; width: 0%; }
+        .card-container { perspective: 1000px; position: relative; height: 400px; margin-bottom: 30px; }
+        .flashcard {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d; transition: transform 0.6s ease, opacity 0.5s ease, scale 0.5s ease;
+            cursor: pointer; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .flashcard.slide-out { transform: translateX(100%) rotateZ(15deg); opacity: 0; }
+        .flashcard.delete-out { transform: scale(0); opacity: 0; }
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 30px; text-align: center;
+        }
+        .card-front { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); color: #333; border: 2px solid #e9ecef; }
+        .card-back { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1565c0; transform: rotateY(180deg); border: 2px solid #90caf9; }
+        .card-content { font-size: 18px; line-height: 1.6; max-height: 100%; overflow-y: auto; width: 100%; }
+        .card-front .card-content { font-weight: 600; font-size: 20px; }
+        .controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 25px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .btn-skip { background: linear-gradient(135deg, #ff9800, #f57c00); color: white; }
+        .btn-skip:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,152,0,0.4); }
+        .btn-delete { background: linear-gradient(135deg, #f44336, #d32f2f); color: white; }
+        .btn-delete:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(244,67,54,0.4); }
+        .btn-shuffle { background: linear-gradient(135deg, #9c27b0, #7b1fa2); color: white; }
+        .btn-shuffle:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(156,39,176,0.4); }
+        .stats { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; color: white; text-align: center; backdrop-filter: blur(10px); }
+        .stats-item { display: inline-block; margin: 0 15px; }
+        .completion-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 1000;
+        }
+        .completion-modal.show { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: white; padding: 40px; border-radius: 20px; text-align: center;
+            max-width: 400px; width: 90%; transform: scale(0.7); transition: transform 0.3s ease;
+        }
+        .completion-modal.show .modal-content { transform: scale(1); }
+        .modal-title { font-size: 24px; color: #4CAF50; margin-bottom: 15px; }
+        .modal-text { font-size: 16px; color: #666; margin-bottom: 25px; }
+        .btn-restart { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
+        .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76,175,80,0.4); }
+        .card-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #666; font-size: 14px; opacity: 0.7; }
+        @media (max-width: 600px) {
+            .card-container { height: 350px; }
+            .card-content { font-size: 16px; }
+            .card-front .card-content { font-size: 18px; }
+            .controls { gap: 15px; flex-wrap: wrap; }
+            .btn { padding: 10px 20px; font-size: 14px; min-width: 80px; }
+        }
+        .home-fab {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            z-index: 1200;
+            font-size: 22px;
+        }
+        .home-fab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.22);
+        }
+    </style>
+    </head>
+    <body>
+    <a href="index.html" class="home-fab" aria-label="返回首页" title="返回首页">🏠</a>
+    <div class="container">
+        <div class="header">
+            <h1>心理学研究方法闪卡记忆</h1>
+            <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+            <p id="cardCounter">载入中...</p>
+        </div>
+        <div class="card-container">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="card-content" id="questionContent">载入中...</div>
+                    <div class="card-hint">点击卡片查看答案</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-content" id="answerContent">载入中...</div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn btn-skip" id="skipBtn">跳过</button>
+            <button class="btn btn-delete" id="deleteBtn">删除</button>
+            <button class="btn btn-shuffle" id="shuffleBtn">重新洗牌</button>
+        </div>
+        <div class="stats">
+            <div class="stats-item"><strong>已复习:</strong> <span id="reviewedCount">0</span></div>
+            <div class="stats-item"><strong>剩余:</strong> <span id="remainingCount">0</span></div>
+            <div class="stats-item"><strong>总次数:</strong> <span id="totalReviews">0</span></div>
+        </div>
+    </div>
+    <div class="completion-modal" id="completionModal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 学习完成！</h2>
+            <p class="modal-text">恭喜你完成了所有闪卡的学习！</p>
+            <p class="modal-text">总复习次数: <span id="finalReviewCount">0</span></p>
+            <button class="btn btn-restart" id="restartBtn">重新开始</button>
+        </div>
+    </div>
+    <script>
+        const flashcardData = [
+            { question: "心理与教育科学研究的目的", answer: "描述、解释、预测、控制" },
+            { question: "心理与教育科学研究的功能", answer: "（1）满足人类探索未知、追求真理的需要。\n（2）将有关科学知识应用于社会实践，促进社会进步和人类发展。\n（3）解决个体发展中的问题和矛盾，以利于个体的健康发展。" },
+            { question: "心理与教育科学研究的原则", answer: "（1）客观性原则\n（2）系统性原则\n（3）理论与实践相结合原则\n（4）教育性原则\n（5）伦理性原则" },
+            { question: "心理学研究的特殊性", answer: "（1）研究对象与研究者的特殊性\n①研究对象是有意识、有心理学的有机体\n②研究对象是社会实体，具有社会性\n③研究变量多且复杂，研究难以精确地解释和预测\n④研究对象无法精确控制与操纵\n⑤人的心理具有发展性\n⑥人的心理具有个体差异性\n⑦研究者与研究对象都是有意识、有目的的人\n（2）研究过程的特殊性\n①心理与教育科学研究是主客体相互作用的过程，研究对象根据研究者的要求或实验控制做出反应，研究对象的反应反过来影响研究者的行为。\n②研究过程受社会政治背景影响\n（3）研究方法的特殊性\n①研究要符合伦理性原则\n②多数研究方法较难准确描述出脑内心理活动的具体过程与变化" },
+            { question: "心理学理论的评价标准", answer: "（1）精确性\n（2）可检验性\n（3）概括能力\n（4）简洁性" },
+            { question: "心理学研究的新趋势", answer: "（1）现场化\n（2）多学科化\n（3）综合化\n（4）现代化\n（5）数学化" },
+            { question: "生态化倾向的概念", answer: "强调在真实、自然的情景中研究人的心理活动规律与教育规律，提高研究外的外部效度、生态效度，提高研究结果在真实的生活、工作、教育实践中的应用性和普通适用性。" },
+            { question: "生态化倾向的主要观点", answer: "①心理活动或教育活动与处于一个复杂的体系之中\n②心理与教育活动受内部因素和外部因素同时影响\n③心理与教育研究应在自然与社会生态环境中进行\n④心理与教育研究应注重个体与所处环境之间的相互作用\n⑤心理与教育研究应注重研究个体在其与环境相互作用过程中的主动性\n⑥心理与教育研究应尽量兼顾真实与严格控制" },
+            { question: "生态化倾向的原因", answer: "①提高研究的外部效度\n②对复杂心理和行为的认识深化\n③实践需求的推动" },
+            { question: "生态化倾向的意义", answer: "①解决了以往的内部效度和外部效度不能同时得到保证的矛盾\n②能够真实得揭示人们在教育实践、社会生活等各种活动中的心理活动规律和教育教学规律\n③保证了心理及行为变化仍然是现实中各种因素综合作用的结果\n④可以根据需要选择被试数量，以保证在统计上获得比较可靠的结论\n⑤研究工作不受实验室条件限制，开展方便灵活" },
+            { question: "课题选择的原则", answer: "（1）需要性原则\n（2）创造性原则\n（3）科学性原则\n（4）可行性原则" },
+            { question: "课题选择的策略", answer: "（1）社会需要\n（2）理论发展：证实理论、不同理论争执、质疑现有理论\n（3）研究文献：已有文献忽略的问题、研究结果的矛盾、方法学问题、必要的重复\n（4）研究过程\n（5）科技进展：科学方法新进展、学科交叉的空白区、研究技术的新进展、学科分支的新进展" },
+            { question: "研究假设的评价标准", answer: "（1）研究假设的提出应有一定的依据，即以一定的理论或一定的经验和观察事实为前提，因而具有一定的科学性和探讨价值，而不是毫无根据的臆测和猜想\n（2）研究假设一般应对两个或两个以上的变量间的关系做出推测\n（3）研究假设应以陈述句的形式清楚、毫不含糊地加以说明，而不能以问句形式或含糊不清的陈述句形式出现\n（4）研究假设应当是可以检验的，即可被研究人员用以一定的方法收集的数据和事实加以验证\n（5）研究假设应简单明了" },
+            { question: "研究文献的类别", answer: "书籍、期刊、报纸、科技报告、学术会议论文、学位论文、科研简讯、科技档案" },
+            { question: "研究文献查阅的意义", answer: "（1）有助于研究者对相关领域的情况有一个系统、全面的认识和了解\n（2）有助于研究者选择研究课题，形成研究假设\n（3）有助于研究者搞好研究设计\n（4）有助于研究者解释研究结果、撰写研究论文" },
+            { question: "研究文献阅读的原则", answer: "（1）计划性原则\n（2）顺序性原则\n（3）批判性原则\n（4）同时性原则" },
+            { question: "研究文献搜集的原则", answer: "（1）在时间上应当从现在到过去，采用倒查法\n（2）在范围、数量上应有所限制\n（3）注意搜集第一手资料\n（4）注意搜集得出各种各样观点、不同甚至相互矛盾结论的代表性文献\n（5）注意跨学科、跨领域地搜集资料" },
+            { question: "课程论证的意义", answer: "（1）书面形式的课题论证有助于进一步详细阐述研究课题的目的、意义、具体研究问题，明确研究将采取的具体途径和方法，指明预期成果，从而使整个研究课题的提出具体化、系统化、完善化。\n（2）根据研究者的课题论证报告，有关部门、基金会、评审专家可以在一定程度上了解研究者的科学态度、学术水平和科研能力。\n（3）进行课题论证、撰写课题论证报告，是进行课题评审工作、做出科研项目立项和资助决定的需要。\n（4）课题论证指明了完成该研究课题所要达到的目标和研究成果的呈现方式，为今后对研究课题的进展和完成情况进行检查、鉴定提供了标准和具体指标。" },
+            { question: "文献综述的特点", answer: "能全面、系统地反映国内外某一学科、某一专业或某一研究专题在某一时期内的发展历史、当前状况及发展趋势。" },
+            { question: "文献综述的基本要求", answer: "（1）搜集文献应当全面，所引用的资料和数据要真实可靠\n（2）坚持材料与观点的统一\n（3）综述要有针对性\n（4）应提纲挈领，突出重点\n（5）可适当使用统计图表来说明发展的过程和现状\n（6）注意区别文献中的观点和作者的观点" },
+            { question: "研究信度", answer: "研究信度是指研究所得事实、数据的一致性和稳定性程度。" },
+            { question: "研究效度", answer: "效度通常是指一个测量工具能够量出它所需要的东西或达到某种目的的程度。" },
+            { question: "构思效度", answer: "研究的构思效度是指理论构思的合理性及其转化为抽象与操作定义的恰当程度，它涉及建立可观测指标的理论设想及其操作化等方面的问题。" },
+            { question: "内部效度", answer: "研究的内部效度是指在研究的自变量与因变量之间存在一定关系的明确程度。" },
+            { question: "构思效度的影响因素", answer: "（1）对构思缺乏明确的说明，概念解释模糊，逻辑关系不清，层次不明。\n（2）单一方法和操作引起的偏差。\n（3）构思水平之间的混淆\n（4）研究过程中主试的期望、被试因猜想而发生的心理与行为的改变、不同实验处理之间的交互作用等。" },
+            { question: "内部效度的影响因素", answer: "（1）成熟因素\n（2）历史因素\n（3）被试选择上的差异\n（4）研究被试缺失产生的效应\n（5）前测影响\n（6）实验程序不一致或处理扩散产生的效应\n（7）统计回归效应\n（8）多种研究条件与因素间的交互作用" },
+            { question: "外部效度", answer: "研究的外部效度是指研究结果能够一般化和普通化到样本来自的总体和其他变量条件、时间和背景中去的程度，即研究结果的普遍代表性和适用性。" },
+            { question: "取样设计的基本原则", answer: "取样设计应遵循的基本原则是随机性原则，是指在进行抽样时，总体中每一个个体被抽选的概率是完全均等的。" },
+            { question: "研究变量的选择", answer: "（1）根据研究目的确定研究的变量，考虑研究变量的性质和特点\n（2）辨明无关变量\n（3）确定研究变量的数目\n（4）考虑变量的测量水平" },
+            { question: "操作定义", answer: "在研究中，对研究变量或指标做出明确定义有两种方式，一是抽象定义，二是操作定义。抽象定义是对研究变量或指标共同本质的概括，其作用在于揭示它们的内涵，是设计好操作定义的重要基础。操作定义就是用可感知、可度量的事物、事件、现象和方法对变量或指标做出具体的界限、说明。" },
+            { question: "操作定义的特征", answer: "（1）在定义内容上，操作定义用具体事务、现象或方法来说明变量或概念，而抽象定义则采用概念、同义语进行说明。\n（2）在定义的方法上操作定义采用经验的方法，即可直接感知和度量的方法，而抽象定义则使用逻辑的方法。\n（3）在定义的着重点上，操作定义着重于界定变量或指标的外延或操作过程，而抽象定义则着重于揭示变量或指标的内涵和本质。" },
+            { question: "操作定义的作用", answer: "（1）有利于提高研究的客观性\n（2）有利于研究假设的检验\n（3）有利于提高心理与教育科学研究的统一性\n（4）有利于提高研究结果的可比性" },
+            { question: "操作定义设计的方法", answer: "（1）方法与程序描述法\n（2）动态特征描述法\n（3）静态特征描述法" },
+            { question: "无关变量的主要类别", answer: "（1）被试方面存在的无关变量\n（2）主试方面存在的无关变量\n（3）研究设计方面存在的无关变量\n①研究方法本身不完善\n②测量仪器、设备的安排、布置、调整不当\n③测量工具不完善\n④被试选取、研究时间和环境选取等方面存在的不足\n⑤研究程序安排不当\n（4）研究实施环境条件方面的无关变量\n（5）数据处理方面存在的无关变量" },
+            { question: "随机误差和系统误差", answer: "（1）随机误差又叫可变误差，是偶然、随机的无关变量引起的，较难控制，它使对同一事物、现象或特征的多次测量与研究得出不一致的结果，其方向和大小的变化完全是随机的，无规律可循。\n（2）系统误差又叫常定误差，是由常定的、有规律的无关变量引起的。它稳定地存在于每一次测量和研究结果之中，使得研究者对同一事物、现象或特征的多次测量与研究结果虽然一致，但却不准确，其方向和大小的变化是恒定而有规律的。" },
+            { question: "无关变量的控制", answer: "（1）消除法\n（2）恒定法与平衡法\n（3）统计控制法" },
+            { question: "时间取样与事件取样观察策略的不同点", answer: "（1）时间取样考察的单位是时间区间，事件取样观察考察的是行为事件本身\n（2）时间取样仅能研究每十五分钟至少发生一次的行为，事件取样可研究各种行为，不受发生频率限制\n（3）时间取样较适于专业研究者使用，事件取样较适于教师使用\n（4）时间取样研究的是事件或行为是否存在，事件取样研究的是事件或行为的特征" },
+            { question: "访谈问题的编制", answer: "（1）问题要清楚明确，不含糊，不模棱两可。\n（2）问题的文字表述要适合访谈对象的文化程度和知识经验水平，避免用专业术语。\n（3）不要提访谈对象不能做出回答的问题\n（4）对可能需要解释说明的问题，应制定统一的解释说明方式、说明范围、内容以及说明用词。\n（5）注意使每一具体提问都集中在一个单一的变量或问题上\n（6）避免引导性问题，措词不能流露偏见\n（7）避免奉承性问题" },
+            { question: "问卷设计的原则", answer: "（1）目的性原则\n（2）全面性原则\n（3）计划性原则" },
+            { question: "影响问卷有效性的因素", answer: "（1）问卷设计：指导语含糊不清、内容有偏差、问卷复杂数量过多\n（2）被试：态度与能力、心理状态\n（3）外界作用：主试特点、研究环境与他人影响" },
+            { question: "事实性问题", answer: "事实性问题是指关于曾经发生过的、现存的和将要发生的事件，或一些实际行为的问题。分为人口学资料和有关实际行为的问题两部分。" },
+            { question: "访谈法的评价", answer: "（1）优点：\n①获得更为丰富、广泛的资料\n②能灵活、有针对性地开展资料收集\n③保证研究资料具有较高的可靠性\n④适用范围广\n⑤问卷回收率和有效率高\n（2）局限：\n①准确可靠性可能受访谈者素质影响\n②某些问题不宜访谈\n③费时费力费财\n④资料难以量化\n⑤受环境、事件和访谈对象情绪状态限制" },
+            { question: "定性分析的特点", answer: "（1）建立在描述基础上的逻辑分析或判断\n（2）侧重揭示现象或行为的“意义”\n（3）倾向于对研究结果进行归纳分析\n（4）更重视对过程和相互关系的分析" },
+            { question: "研究结果解释的意义", answer: "（1）表达结果的意义及相互关系，检验研究假设\n（2）有助于成果呈现与交流，有助于研究评价\n（3）有助于理论建构与完善\n（4）有助于发现研究假设之外的成果，发现新问题和新方法" },
+            { question: "质量审核", answer: "审查核实研究资料、数据的真伪，删除错误结果，保留合理结果，并根据实际情况对缺失结果进行补充，以保证研究结果的质量。" },
+            { question: "摘要", answer: "概括反映研究主要方面：问题、被试特点、研究步骤（数据收集、实验程序等）、研究结果及结论。字数一般限制在300字以内。" },
+            { question: "方法", answer: "包括被试情况、研究工具及材料、研究设计与程序等方面的内容。" }
+        ];
+        function shuffleArray(array) {
+            const a = [...array];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+        let currentCardIndex = 0;
+        let remainingCards = [];
+        let reviewedCount = 0;
+        let totalReviews = 0;
+        let isFlipped = false;
+        const flashcard = document.getElementById('flashcard');
+        const questionContent = document.getElementById('questionContent');
+        const answerContent = document.getElementById('answerContent');
+        const skipBtn = document.getElementById('skipBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const progressBar = document.getElementById('progressBar');
+        const cardCounter = document.getElementById('cardCounter');
+        const reviewedCountEl = document.getElementById('reviewedCount');
+        const remainingCountEl = document.getElementById('remainingCount');
+        const totalReviewsEl = document.getElementById('totalReviews');
+        const completionModal = document.getElementById('completionModal');
+        const finalReviewCount = document.getElementById('finalReviewCount');
+        const restartBtn = document.getElementById('restartBtn');
+        function init() {
+            remainingCards = shuffleArray(flashcardData);
+            loadCard();
+            updateStats();
+            flashcard.addEventListener('click', flipCard);
+            skipBtn.addEventListener('click', skipCard);
+            deleteBtn.addEventListener('click', deleteCard);
+            shuffleBtn.addEventListener('click', shuffleCards);
+            restartBtn.addEventListener('click', restart);
+        }
+        function loadCard() {
+            if (remainingCards.length === 0) { showCompletionModal(); return; }
+            currentCardIndex = 0;
+            const currentCard = remainingCards[currentCardIndex];
+            questionContent.textContent = currentCard.question;
+            answerContent.textContent = currentCard.answer;
+            flashcard.classList.remove('flipped','slide-out','delete-out');
+            isFlipped = false;
+            updateProgress();
+            updateCounter();
+        }
+        function flipCard() {
+            if (!isFlipped) {
+                flashcard.classList.add('flipped');
+                isFlipped = true;
+                totalReviews++;
+                updateStats();
+            }
+        }
+        function skipCard() {
+            if (remainingCards.length <= 1) { showCompletionModal(); return; }
+            flashcard.classList.add('slide-out');
+            setTimeout(() => {
+                const first = remainingCards.shift();
+                remainingCards.push(first);
+                reviewedCount++;
+                totalReviews++;
+                flashcard.classList.remove('slide-out');
+                loadCard();
+                updateStats();
+            }, 300);
+        }
+        function deleteCard() {
+            flashcard.classList.add('delete-out');
+            setTimeout(() => {
+                remainingCards.shift();
+                reviewedCount++;
+                totalReviews++;
+                flashcard.classList.remove('delete-out');
+                loadCard();
+                updateStats();
+            }, 250);
+        }
+        function shuffleCards() {
+            remainingCards = shuffleArray(remainingCards);
+            loadCard();
+        }
+        function updateProgress() {
+            const total = flashcardData.length;
+            const completed = total - remainingCards.length;
+            const pct = Math.round((completed / total) * 100);
+            progressBar.style.width = pct + '%';
+        }
+        function updateCounter() {
+            const total = flashcardData.length;
+            const current = total - remainingCards.length + 1;
+            const showCurrent = remainingCards.length === 0 ? total : Math.max(1, current);
+            cardCounter.textContent = `卡片 ${showCurrent} / ${total}`;
+        }
+        function updateStats() {
+            reviewedCountEl.textContent = reviewedCount;
+            remainingCountEl.textContent = remainingCards.length;
+            totalReviewsEl.textContent = totalReviews;
+        }
+        function showCompletionModal() {
+            finalReviewCount.textContent = totalReviews;
+            completionModal.classList.add('show');
+        }
+        function restart() {
+            completionModal.classList.remove('show');
+            currentCardIndex = 0;
+            remainingCards = shuffleArray(flashcardData);
+            reviewedCount = 0;
+            totalReviews = 0;
+            isFlipped = false;
+            loadCard();
+            updateStats();
+        }
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+    </body>
+    </html>
