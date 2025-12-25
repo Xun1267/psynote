@@ -375,8 +375,11 @@
                 }
 
                 const qMatch = raw.match(/^(\d+)[.、]\s*(.*)$/);
-                // Ensure it's not an answer line (e.g. "1. C" or "21. 答案：B")
-                const isAnswerLine = /^(\d+)[.、]\s*([A-D]+)$/.test(raw) || /^(\d+)[.、]\s*答案[:：]/.test(raw);
+                // Ensure it's not an answer line (e.g. "1. C", "21. 答案：B", "269. 【答案】A, B, C", "• 281. 【答案】B")
+                const isAnswerLine = /^(\d+)[.、]\s*([A-D]+)$/.test(raw) || 
+                                     /^(\d+)[.、]\s*答案[:：]/.test(raw) ||
+                                     /^(\d+)[.、]\s*【答案】/.test(raw) ||
+                                     /^[•o]?\s*\d+[.、]\s*【答案】/.test(raw);
 
                 if (qMatch && !isAnswerLine) {
                     if (current) qBlocks.push(current);
@@ -405,31 +408,42 @@
 
                 let id = null;
                 let ansStr = '';
+                let inlineAna = '';
 
                 // Pattern 1: 21. 答案：B
                 const m1 = raw.match(/^(\d+)[.、]\s*答案[:：]\s*([A-D]+)\s*$/);
+                // Pattern 2: 1. C (Short format)
+                const m2 = raw.match(/^(\d+)[.、]\s*([A-D]+)$/);
+                // Pattern 3: 269. 【答案】A, B, C
+                const m3 = raw.match(/^(\d+)[.、]\s*【答案】\s*([A-D\s,]+)$/);
+                // Pattern 4: • 281. 【答案】B 解析：...
+                const m4 = raw.match(/^[•o]?\s*(\d+)[.、]\s*【答案】\s*([A-D\s,]+)\s+解析[:：]\s*(.*)$/);
+
                 if (m1) {
                     id = parseInt(m1[1], 10);
                     ansStr = m1[2];
-                }
-
-                // Pattern 2: 1. C (Short format)
-                const m2 = raw.match(/^(\d+)[.、]\s*([A-D]+)$/);
-                if (!id && m2) {
+                } else if (m2) {
                     id = parseInt(m2[1], 10);
                     ansStr = m2[2];
+                } else if (m3) {
+                    id = parseInt(m3[1], 10);
+                    ansStr = m3[2];
+                } else if (m4) {
+                    id = parseInt(m4[1], 10);
+                    ansStr = m4[2];
+                    inlineAna = m4[3];
                 }
 
                 if (id !== null) {
-                    answerMap[id] = ansStr.split('');
+                    answerMap[id] = ansStr.replace(/[^A-D]/g, '').split('');
                     
                     // Capture Analysis
-                    let ana = '';
+                    let ana = inlineAna;
                     let j = i + 1;
                     while (j < lines.length) {
                         const t = lines[j].trim();
                         // Stop if next line is a new answer or header
-                        if (/^(\d+)[.、]/.test(t) || /^[一二三四]、/.test(t)) break;
+                        if (/^(\d+)[.、]/.test(t) || /^[一二三四]、/.test(t) || /^[•o]?\s*\d+[.、]/.test(t)) break;
                         
                         const aMatch = t.match(/^[•o]?\s*解析[:：]\s*(.*)$/);
                         if (aMatch) {
